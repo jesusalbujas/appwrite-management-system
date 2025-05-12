@@ -15,7 +15,7 @@ public class ImportEntityProcess extends SvrProcess {
 
     @Override
     protected void prepare() {
-        entity = getParameterAsString("EntityAppwriteType");
+        entity = getParameterAsString("AppwriteEntityType");
     }
 
     @Override
