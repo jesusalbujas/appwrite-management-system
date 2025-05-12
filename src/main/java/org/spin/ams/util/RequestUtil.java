@@ -35,14 +35,14 @@ public class RequestUtil {
      * @return JSON string response from the corresponding endpoint
      */
     public static String fetchDataFor(String entity) {
-        switch (entity.toLowerCase()) {
-            case "threads":
+        switch (entity) {
+            case "Threads":
                 return fetchThreads();
-            case "tipologies":
+            case "Tipology":
                 return fetchTipologies();
-            case "topics":
+            case "Topics":
                 return fetchTopics();
-            case "clients":
+            case "Clients":
                 return fetchClients();
             default:
                 throw new IllegalArgumentException("Entity not supported: " + entity);
