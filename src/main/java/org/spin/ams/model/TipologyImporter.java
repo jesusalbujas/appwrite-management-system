@@ -35,7 +35,7 @@ public class TipologyImporter extends AbstractImporter {
         po.set_ValueOfColumn("IsActive", "Y");
         po.set_ValueOfColumn("UUID", getUuid());
         
-        po.set_ValueOfColumn("Value", json.optString("code"));
+        po.set_ValueOfColumn("Value", json.optString("value"));
         po.set_ValueOfColumn("Name", json.optString("name"));
     }
 }
