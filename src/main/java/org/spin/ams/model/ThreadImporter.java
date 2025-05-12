@@ -58,7 +58,7 @@ public class ThreadImporter extends AbstractImporter {
         po.set_ValueOfColumn("url", json.optString("uri"));
 
         // Client
-        String clientChannelCode = json.optString("clientchannel");
+        String clientChannelCode = json.optString("clientchannel").toUpperCase();
         int clientId = getClientIdByValue(clientChannelCode);
         if (clientId > 0) {
             po.set_ValueOfColumn("JAU01_Clients_ID", clientId);
@@ -67,26 +67,26 @@ public class ThreadImporter extends AbstractImporter {
         }
 
         // Topic
-        String topicCode = json.optString("topic");
+        String topicCode = json.optString("topic").toUpperCase();
         int topicId = getTopicIdByValue(topicCode);
         if (topicId > 0) {
             po.set_ValueOfColumn("JAU01_Topic_ID", topicId);
         } else {
             throw new Exception("No se encontró el topic con código: " + topicCode);
         }
-        
+
         // Tipology
-        String tipologyCode = json.optString("tipology");
+        String tipologyCode = json.optString("tipology").toUpperCase();
         int tipologyId = getTipologyIdByValue(tipologyCode);
-        if (tipologyId > 0 ) {
-        	po.set_ValueOfColumn(tipologyId, tipologyCode);
+        if (tipologyId > 0) {
+            po.set_ValueOfColumn("JAU01_Tipology_ID", tipologyId);
         } else {
-        	throw new Exception("No se encontró el tipology con código " + tipologyCode);
+            throw new Exception("No se encontró el tipology con código: " + tipologyCode);
         }
     }
 
     private int getClientIdByValue(String value) throws SQLException {
-        String sql = "SELECT JAU01_Clients_ID FROM JAU01_Clients WHERE Value = ?";
+        String sql = "SELECT JAU01_Clients_ID FROM JAU01_Clients WHERE UPPER(Value) = ?";
         try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
             pstmt.setString(1, value);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -99,7 +99,7 @@ public class ThreadImporter extends AbstractImporter {
     }
 
     private int getTopicIdByValue(String value) throws SQLException {
-        String sql = "SELECT JAU01_Topic_ID FROM JAU01_Topic WHERE Value = ?";
+        String sql = "SELECT JAU01_Topic_ID FROM JAU01_Topic WHERE UPPER(Value) = ?";
         try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
             pstmt.setString(1, value);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -110,14 +110,15 @@ public class ThreadImporter extends AbstractImporter {
         }
         return -1;
     }
-    
+
     private int getTipologyIdByValue(String value) throws SQLException {
-        String sql = "SELECT JAU01_Tipology_ID FROM JAU01_Tipology WHERE Value = ?";
-        try (PreparedStatement pstmt = DB.prepareStatement(sql, null);
-             ResultSet rs = pstmt.executeQuery()) {
+        String sql = "SELECT JAU01_Tipology_ID FROM JAU01_Tipology WHERE UPPER(Value) = ?";
+        try (PreparedStatement pstmt = DB.prepareStatement(sql, null)) {
             pstmt.setString(1, value);
-            if (rs.next()) {
-                return rs.getInt(1);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("JAU01_Tipology_ID");
+                }
             }
         }
         return -1;
