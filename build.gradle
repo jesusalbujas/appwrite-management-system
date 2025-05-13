@@ -1,92 +1,58 @@
 plugins {
-	id 'java-library'
-	id 'maven-publish'
-	id 'signing'
+    id 'java-library'
+    id 'maven-publish'
 }
 
-sourceCompatibility = 1.11
+group = 'org.adempiere.tools'
+version = System.getenv("ADEMPIERE_LIBRARY_VERSION") ?: "local-1.0.0"
+def artifactId = 'appwrite-management-system'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+    withSourcesJar()
+    withJavadocJar()
+}
 
 repositories {
-	mavenLocal()
-    	mavenCentral()
-    	maven {
-    		url = ""
-        	credentials {
-        		username = System.getenv("GITHUB_DEPLOY_USER") ?: System.properties['deploy.user']
-            		password = System.getenv("GITHUB_DEPLOY_TOKEN") ?: System.properties['deploy.token'] 
-		}
-	}
-	maven {
-    		url = "https://maven.pkg.github.com/adempiere/adempiere"
-        	credentials {
-        		username = System.getenv("GITHUB_DEPLOY_USER") ?: System.properties['deploy.user']
-            		password = System.getenv("GITHUB_DEPLOY_TOKEN") ?: System.properties['deploy.token'] 
-		}
-	}
-}
-
-ext {
-    libraryRepo  = "https://maven.pkg.github.com/repository"
-    patchVersion = System.getenv("ADEMPIERE_LIBRARY_VERSION") ?: "local-1.0.0"
-    baseVersion  = "3.9.4.001"
-    baseGroupId  = "io.github.adempiere"
-}
-
-dependencies {
-   api fileTree(
-        dir: 'lib',
-        include: [
-            '*.jar'
-        ]
-    )
-    //	ADempiere Core
-    api "${baseGroupId}:base:${baseVersion}"
-}
-
-sourceSets {
-    main {
-         java {
-            srcDirs = ['src/main/java']
-         }
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url = "https://maven.pkg.github.com/jesusalbujas/appwrite-management-system"
+        credentials {
+            username = System.getenv("GITHUB_DEPLOY_USER") ?: System.getProperty("deploy.user")
+            password = System.getenv("GITHUB_DEPLOY_TOKEN") ?: System.getProperty("deploy.token")
+        }
     }
 }
 
-
-def entityType = 'ECA47'
-version = System.getenv("ADEMPIERE_LIBRARY_VERSION") ?: "local-1.0.0"
+dependencies {
+    api fileTree(dir: 'lib', include: ['*.jar'])
+    api "io.github.adempiere:base:3.9.4.001"
+    implementation 'org.json:json:20210307'
+}
 
 jar {
-	manifest {
-		attributes(
-			"Implementation-Title": "ADempiere Chrystal Integration",
-			"Implementation-Version": version,
-			"EntityType": entityType
-		)
+    manifest {
+        attributes(
+            'Implementation-Title': 'Appwrite Management System',
+            'Implementation-Version': version,
+        )
     }
 }
 
 publishing {
-    repositories {
-		mavenLocal()
-        maven {
-            url = libraryRepo
-            credentials {
-                username = System.getenv("GITHUB_DEPLOY_USER") ?: System.properties['deploy.user']
-                password = System.getenv("GITHUB_DEPLOY_TOKEN") ?: System.properties['deploy.token'] 
-            }
-        }
-    }
-    
     publications {
-        maven(MavenPublication) {
-			groupId = 'org.adempiere.tools'
-			artifactId = 'adempiere-template-project'
-			version = patchVersion
-           	from components.java
-           	pom {
-                name = 'adempiere-template-project'
-                description = ''
-                url = ''
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = project.group
+            artifactId = artifactId
+            version = project.version
+
+            pom {
+                name = artifactId
+                description = 'Integration module for ADempiere with Appwrite'
+                url = 'https://github.com/jesusalbujas/appwrite-management-system'
                 licenses {
                     license {
                         name = 'GNU General Public License v3.0'
@@ -95,12 +61,21 @@ publishing {
                 }
                 developers {
                     developer {
-                        id = '<your id>'
-                        name = '<Your Name>'
-                        email = '<your mail>@'
+                        id = 'jalbujas'
+                        name = 'Jesús Albujas'
+                        email = 'jesusramirez35000@gmail.com'
                     }
                 }
             }
-		}
-	}
+        }
+    }
+    repositories {
+        maven {
+            url = uri("https://maven.pkg.github.com/jesusalbujas/appwrite-management-system")
+            credentials {
+                username = System.getenv("DEPLOY_USER") ?: System.getProperty("deploy.user")
+                password = System.getenv("DEPLOY_TOKEN") ?: System.getProperty("deploy.token")
+            }
+        }
+    }
 }
