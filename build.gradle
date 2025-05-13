@@ -20,8 +20,8 @@ repositories {
     maven {
         url = "https://maven.pkg.github.com/jesusalbujas/appwrite-management-system"
         credentials {
-            username = System.getenv("GITHUB_DEPLOY_USER") ?: System.getProperty("deploy.user")
-            password = System.getenv("GITHUB_DEPLOY_TOKEN") ?: System.getProperty("deploy.token")
+            username = System.getenv("DEPLOY_USER") ?: System.getProperty("deploy.user")
+            password = System.getenv("DEPLOY_TOKEN") ?: System.getProperty("deploy.token")
         }
     }
 }
