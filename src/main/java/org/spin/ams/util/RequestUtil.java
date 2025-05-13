@@ -4,10 +4,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import org.compiere.model.MSysConfig;
 
 public class RequestUtil {
 
-    private static final String BASE_URL = "http://api.adempiere.io:2021";
+    private static final String BASE_URL = MSysConfig.getValue("APPWRITE_ENDPOINT", "http://api.adempiere.io:2021");
 
     // Fetch data specifically from the /threads endpoint
     public static String fetchThreads() {
