@@ -7,7 +7,7 @@ import java.net.URL;
 
 public class RequestUtil {
 
-    private static final String BASE_URL = "http://api.adempiere.io:2020";
+    private static final String BASE_URL = "http://api.adempiere.io:2021";
 
     // Fetch data specifically from the /threads endpoint
     public static String fetchThreads() {
@@ -26,7 +26,7 @@ public class RequestUtil {
 
     // Fetch data from the /clients endpoint
     public static String fetchClients() {
-        return fetchFromEndpoint("/threads?customers=all");
+        return fetchFromEndpoint("/clients");
     }
 
     /**
