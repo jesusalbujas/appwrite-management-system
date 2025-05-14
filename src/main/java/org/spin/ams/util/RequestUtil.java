@@ -8,11 +8,11 @@ import org.compiere.model.MSysConfig;
 
 public class RequestUtil {
 
-    private static final String BASE_URL = MSysConfig.getValue("APPWRITE_ENDPOINT", "http://api.adempiere.io:2021");
+    private static final String BASE_URL = MSysConfig.getValue("APPWRITE_ENDPOINT", "http://api.adempiere.io:2024");
 
     // Fetch data specifically from the /threads endpoint
     public static String fetchThreads() {
-        return fetchFromEndpoint("/threads");
+        return fetchFromEndpoint("/threads?page=1&limit=1000000");
     }
 
     // Fetch data from the /tipologies endpoint
@@ -78,8 +78,10 @@ public class RequestUtil {
             return response.toString();
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return "{\"error\": \"" + e.getMessage() + "\"}";
+            String fullUrl = BASE_URL + endpoint;
+            String errorMessage = "No hubo conexión con: " + fullUrl + " - Error: " + e.getMessage();
+            System.err.println(errorMessage);
+            return "{\"error\": \"" + errorMessage.replace("\"", "'") + "\"}";
         }
     }
 
