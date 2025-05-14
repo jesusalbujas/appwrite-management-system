@@ -25,17 +25,21 @@ public class ThreadImporter extends AbstractImporter {
     	po.set_ValueOfColumn("AD_Client_ID", 11);
         po.set_ValueOfColumn("AD_Org_ID", 50006);
 
-        String createdAt = json.optString("createdAt");
+        String createdAt = json.optString("$createdAt");
+        
         if (!createdAt.isEmpty()) {
             OffsetDateTime odt = OffsetDateTime.parse(createdAt);
-            po.set_ValueOfColumn("Created", Timestamp.from(odt.toInstant()));
-        }
+            LocalDateTime ldt = odt.toLocalDateTime();
+            po.set_ValueOfColumn("Created", Timestamp.valueOf(ldt));
+        }        
+        
+        String updatedAt = json.optString("$updatedAt");
 
-        String updatedAt = json.optString("updatedAt");
         if (!updatedAt.isEmpty()) {
             OffsetDateTime odt = OffsetDateTime.parse(updatedAt);
-            po.set_ValueOfColumn("Updated", Timestamp.from(odt.toInstant()));
-        }
+            LocalDateTime ldt = odt.toLocalDateTime();
+            po.set_ValueOfColumn("Updated", Timestamp.valueOf(ldt));
+        }      
 
         po.set_ValueOfColumn("CreatedBy", 100);
         po.set_ValueOfColumn("UpdatedBy", 100);
@@ -63,7 +67,6 @@ public class ThreadImporter extends AbstractImporter {
         if (!dateClosed.isEmpty()) {
             OffsetDateTime odt = OffsetDateTime.parse(dateClosed);
             LocalDateTime ldt = odt.toLocalDateTime();
-            System.out.println("Fecha es" + ldt);
             po.set_ValueOfColumn("DateClosed", Timestamp.valueOf(ldt));
         }
 
