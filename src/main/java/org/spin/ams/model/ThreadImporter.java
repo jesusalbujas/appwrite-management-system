@@ -4,10 +4,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-
+import java.math.BigDecimal;
 import org.compiere.model.PO;
+import org.compiere.model.Query;
 import org.compiere.util.DB;
+import org.compiere.util.Env;
 import org.json.JSONObject;
 
 public class ThreadImporter extends AbstractImporter {
@@ -42,15 +45,26 @@ public class ThreadImporter extends AbstractImporter {
         po.set_ValueOfColumn("Value", json.optString("$id"));
         po.set_ValueOfColumn("Name", json.optString("name"));
         po.set_ValueOfColumn("Description", json.optString("description"));
-        po.set_ValueOfColumn("Qty", json.optString("qty"));
-        po.set_ValueOfColumn("QtyMin", json.optString("qtymin"));
+        
+        String qtyStr = json.optString("qty");
+        if (qtyStr != null && !qtyStr.isEmpty()) {
+            po.set_ValueOfColumn("Qty", new BigDecimal(qtyStr));
+        }
+
+        String qtyMinStr = json.optString("qtymin");
+        if (qtyMinStr != null && !qtyMinStr.isEmpty()) {
+            po.set_ValueOfColumn("QtyMin", new BigDecimal(qtyMinStr));
+        }
+        
         po.set_ValueOfColumn("Status", json.optString("status"));
         po.set_ValueOfColumn("Support_User", json.optString("supportuser"));
 
-        String dateClosed = json.optString("DateClosed");
+        String dateClosed = json.optString("dateclosed");
         if (!dateClosed.isEmpty()) {
             OffsetDateTime odt = OffsetDateTime.parse(dateClosed);
-            po.set_ValueOfColumn("DateClosed", Timestamp.from(odt.toInstant()));
+            LocalDateTime ldt = odt.toLocalDateTime();
+            System.out.println("Fecha es" + ldt);
+            po.set_ValueOfColumn("DateClosed", Timestamp.valueOf(ldt));
         }
 
         po.set_ValueOfColumn("Applicant_Name", json.optString("applicantname"));
@@ -122,5 +136,17 @@ public class ThreadImporter extends AbstractImporter {
             }
         }
         return -1;
+    }
+
+    @Override
+    protected PO lookupExistingRecord(JSONObject json) {
+        String valueThread = json.optString("$id");
+
+        if (valueThread == null || valueThread.trim().isEmpty()) {
+            return null;
+        }
+        return new Query(Env.getCtx(), getTableName(), "Value = ?", null)
+            .setParameters(valueThread.trim())
+            .first();
     }
 }
