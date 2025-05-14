@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 
 import org.compiere.model.PO;
+import org.compiere.model.Query;
+import org.compiere.util.Env;
 import org.json.JSONObject;
 
 public class TipologyImporter extends AbstractImporter {
@@ -37,5 +39,17 @@ public class TipologyImporter extends AbstractImporter {
         
         po.set_ValueOfColumn("Value", json.optString("value"));
         po.set_ValueOfColumn("Name", json.optString("name"));
+    }
+
+    @Override
+    protected PO lookupExistingRecord(JSONObject json) {
+        String valueTipology = json.optString("value");
+
+        if (valueTipology == null || valueTipology.trim().isEmpty()) {
+            return null;
+        }
+        return new Query(Env.getCtx(), getTableName(), "Value = ?", null)
+            .setParameters(valueTipology.trim())
+            .first();
     }
 }
