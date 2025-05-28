@@ -1,7 +1,5 @@
 # Appwrite Management System Project
 
-Fill it with a comment about project.
-
 ## Requirements
 - [JDK 11 or later](https://adoptium.net/)
 - [Gradle 8.0.1 or later](https://gradle.org/install/)
